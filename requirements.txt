@@ -1,0 +1,7 @@
+Django==2.1.*
+sorl-thumbnail
+json5
+Pillow
+whitenoise
+gunicorn
+psycopg2
