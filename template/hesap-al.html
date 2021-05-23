@@ -1,0 +1,264 @@
+{% extends 'include/base.html' %}
+{% load grup_extras %}
+
+{% block content %}
+        <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="overview-wrap ">
+                                    <h2 >Masa {{ masa.masa_no }} Hesap</h2>
+                                </div>
+                            </div>
+                        </div><hr><br>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="table-responsive table--no-card m-b-40">
+                                    <table class="table table-borderless table-striped table-earning" id="table" style="text-align: center">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Ürün Adı</th>
+                                                <th>Tane Fiyatı</th>
+                                                <th>Ara toplam Fiyatı</th>
+                                                <th>Porsiyon</th>
+                                                <th>Toplam Ürün</th>
+                                                <th>Seçili Ürün Sayısı</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row justify-content-center" >
+                                    <div class="col-lg-10 col-sm-10 col-10">
+                                        <h3 id="aratoplam" ></h3><br>
+                                        <h3 id="total" ></h3><br>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center" style="margin-bottom: 50px">
+                                        <div class="col-lg-5 col-sm-5 col-5">
+                                            <form method="post" style="width: 100%" action="{% url 'ara_toplam' %}">
+                                                {% csrf_token %}
+                                                <input name="masa" style="display: none" value="{{ masa.masa_no }}">
+                                                    <input id="veri" name="veri" style="display: none">
+                                                    <button type="submit" class="btn btn-danger" id="ara_toplam" style="width: 100%">Ara Toplam Öde</button>
+                                                </form>
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-5" style="width: 50%" id="ara_toplam_div">
+                                            <form method="post" style="width: 100%">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-primary" id="tamamini_ode" style="width: 100%">Tümünü Öde</button>
+                                            </form>
+                                        </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div id="snackbar"></div>
+                </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+
+
+    const count = {};
+    let index1;
+    let toplam=0;
+    let veri=document.getElementById("veri");
+    const liste={{masa.siparis_list|safe}};
+    const myArray={{masa.siparis_list|safe}};
+    var aratoplam=0;
+    var temp_list={{masa.siparis_list|safe}};
+
+    {% if not masa.masa_bosmu %}
+        liste.siparisler.forEach(function (i) {
+            ekle(i.id,i.porsiyon);
+        })
+    {% endif %}
+
+    document.getElementById("ara_toplam").disabled=true;
+    var checkboxElems = document.querySelectorAll("input[type='checkbox']");
+
+    for (var i = 0; i < checkboxElems.length; i++) {
+        checkboxElems[i].addEventListener("click", displayCheck);
+     }
+
+    function displayCheck(e) {
+        var id_tut=e.target.id.toString().replace("checkbox","");
+        if (e.target.checked) {
+            document.getElementById("row"+id_tut).className="overview-item overview-item--c3";
+            liste.siparisler.forEach(function (i) {
+                if(id_tut===i.id.toString()+i.porsiyon.toString()){
+                    myArray.siparisler.forEach(function (j) {
+                        if (id_tut === j.id.toString()+j.porsiyon.toString()) {
+                            temp_list.siparisler.forEach(function (k) {
+                                if (id_tut === k.id.toString()+k.porsiyon.toString()) {
+                                    k.adet = i.adet - j.adet;
+                                    veri.setAttribute("value", JSON.stringify(temp_list));
+                                    aratoplam += j.adet*k.fiyat;
+                                    document.getElementById("aratoplam").innerText = "Ara Toplam: " + aratoplam + "₺";
+                                    document.getElementById("ara_toplam").disabled = false;
+                                    console.log("checkbox açık",temp_list);
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        } else {
+            kontrol=true;
+            for (var i=0;i<checkboxElems.length;i++){
+                if (checkboxElems[i].checked){
+                    kontrol=false;
+                }
+            }
+            document.getElementById("row"+id_tut).className="";
+            liste.siparisler.forEach(function (i) {
+                if(id_tut===i.id.toString()+i.porsiyon.toString()){
+                    myArray.siparisler.forEach(function (j) {
+                        if (id_tut === j.id.toString()+j.porsiyon.toString()) {
+                            temp_list.siparisler.forEach(function (k) {
+                                if (id_tut === k.id.toString()+k.porsiyon.toString()) {
+                                    document.getElementById("adet" + id_tut).innerText=i.adet;
+                                    j=i;
+                                    k=i;
+                                    aratoplam-=j.adet * j.fiyat;
+                                    document.getElementById("aratoplam").innerText="Ara Toplam: "+aratoplam+"₺";
+                                    console.log("checkbox kapalı",temp_list);
+                                    if (kontrol){
+                                        document.getElementById("ara_toplam").disabled=true;
+                                    }
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    }
+
+
+        function ekle(index,porsiyon_bilgisi) {
+            {% for i in menu %}
+                var id ={{ i.id }};
+                index1 = index;
+                if (id === parseInt(index)) {
+                    liste.siparisler.forEach(function (l) {
+                        if (l.id===index && l.porsiyon===porsiyon_bilgisi){
+                            toplam+=l.fiyat*l.adet;
+                            document.getElementById("total").innerText = "Toplam :" + toplam + "₺";
+                            let table = document.getElementById("table");
+                            let row = table.insertRow(1);
+                            let cell1 = row.insertCell(0);
+                            let cell2 = row.insertCell(1);
+                            let cell3 = row.insertCell(2);
+                            let cell4 = row.insertCell(3);
+                            let cell5 = row.insertCell(4);
+                            let cell6 = row.insertCell(5);
+                            let cell7 = row.insertCell(6);
+                            row.id = "row"+l.id+""+l.porsiyon;
+                            cell2.innerHTML = "<td class='text-center' style='padding :20px'>" + "{{ i.urun_adi }}" + "</th>";
+                            cell3.innerHTML = "<th class='text-center' style='padding: 20px'><h5>" + l.fiyat + "</h5> </th>";
+                            cell5.innerHTML = "<th class='text-center' style='padding: 20px'><h5>" + l.porsiyon + "</h5> </th>";
+                            cell4.innerHTML = "<th class='text-center' style='padding: 20px'><h5 id='fiyat"+l.id+""+l.porsiyon+"'>" + "{{ i.fiyat|safe }}" + "</h5> </th>";
+                            cell6.innerHTML = "<th class='text-center' style='padding: 20px'><h5>" + l.adet + " adet</h5> </th>";
+                            cell7.innerHTML = `<th class='text-center' style='padding: 20px'><div class="row">
+                                            <div class="col">
+                                                <button class="item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Send" onclick="azalt(`+""+l.id+","+l.porsiyon+`)">
+                                                    <i class="zmdi zmdi-minus-circle" style="font-size: 30px"></i>
+                                                </button>
+                                            </div>
+                                            <div class="col" style="margin-left: -40px;margin-right:-40px">
+                                                <h3 style="font-size: 25px" id="`+ "adet"+l.id+""+l.porsiyon+`">` + l.adet + `</h3>
+                                            </div>
+                                            <div class="col">
+                                                <button class="item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Send" onclick="arttir(`+""+l.id+","+l.porsiyon+`)" >
+                                                    <i class="zmdi zmdi-plus-circle" style="font-size: 30px"></i>
+                                                </button>
+                                            </div>
+                                        </div></th>`
+                            cell1.innerHTML = "<td><input id='checkbox"+l.id+""+l.porsiyon+"' name='checkbox' type='checkbox' name='checkbox' style='zoom: 1.8'></td>";
+                            document.getElementById("fiyat" + l.id+""+l.porsiyon).innerText = l.adet * l.fiyat;
+                            veri.setAttribute("value", JSON.stringify(temp_list));
+                        }
+                    })
+
+                }
+            {% endfor %}
+        }
+
+
+        function arttir(id,porsiyon) {
+            var id_tut=id.toString()+porsiyon.toString();
+            if (document.getElementById("checkbox" + id.toString()+porsiyon.toString()).checked) {
+                liste.siparisler.some(function (i) {
+                    if (id_tut === i.id.toString() + i.porsiyon.toString()) {
+                        myArray.siparisler.some(function (j) {
+                            if (id_tut === j.id.toString() + j.porsiyon.toString()) {
+                                temp_list.siparisler.some(function (k) {
+                                    if (id_tut === k.id.toString() + k.porsiyon.toString()) {
+                                        if (j.adet < i.adet) {
+                                            console.log("arttır çalıştı");
+                                            var tut = j.adet;
+                                            j.adet = tut + 1;
+                                            document.getElementById("adet" + id_tut).innerText = j.adet;
+                                            document.getElementById("fiyat" + id_tut).innerText = j.adet * j.fiyat;
+                                            k.adet = i.adet - j.adet;
+                                            veri.setAttribute("value", JSON.stringify(temp_list));
+                                            aratoplam += j.fiyat;
+                                            document.getElementById("aratoplam").innerText = "Ara Toplam: " + aratoplam + "₺";
+                                            console.log("temp", temp_list);
+                                            return true;
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        }
+
+        function azalt(id,porsiyon) {
+            var id_tut=id.toString()+porsiyon.toString();
+            if (document.getElementById("checkbox" + id_tut).checked) {
+                liste.siparisler.some(function (i) {
+                    if (id_tut === i.id.toString() + i.porsiyon.toString()) {
+                        myArray.siparisler.some(function (j) {
+                            if (id_tut === j.id.toString() + j.porsiyon.toString()) {
+                                temp_list.siparisler.some(function (k) {
+                                    if (id_tut === k.id.toString() + k.porsiyon.toString()) {
+                                        var tut = j.adet;
+                                        if (j.adet > 1) {
+                                            console.log("azalt çalıştı");
+                                            j.adet = tut - 1;
+                                            document.getElementById("adet" + id_tut).innerText = j.adet;
+                                            document.getElementById("fiyat" + id_tut).innerText = j.fiyat * j.adet;
+                                            console.log("list", liste);
+                                            console.log("myArray", myArray);
+                                            k.adet = i.adet - j.adet;
+                                            veri.setAttribute("value", JSON.stringify(temp_list));
+                                            aratoplam -= j.fiyat;
+                                            document.getElementById("aratoplam").innerText = "Ara Toplam: " + aratoplam + "₺";
+                                            console.log("temp", temp_list);
+                                            return true;
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        }
+</script>
+
+{% endblock %}
+

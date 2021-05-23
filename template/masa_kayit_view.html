@@ -1,0 +1,228 @@
+{% extends 'include/base.html' %}
+
+
+{% block content %}
+        <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="overview-wrap ">
+                                    <h2 class="title-1">Masa {{ masa.masa_no }} Kayıtları</h2>
+                                </div>
+                            </div>
+                        </div><br><hr>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- DATA TABLE -->
+                                <form method="get" style="width: 100%">
+                                <div class="table-data__tool">
+                                    <div class="table-data__tool-left">
+                                        <div class="rs-select2--light rs-select2--sm">
+                                            <input name="filtreleme_turu" value="basic" style="display: none">
+                                            <select class="js-select2" name="tur">
+                                                <option {% if request.GET.tur == "Tümü" %}selected="selected" {% endif %}>Tümü</option>
+                                                <option {% if request.GET.tur == "Günlük" %}selected="selected" {% endif %}>Günlük</option>
+                                                <option {% if request.GET.tur == "Haftalık" %}selected="selected" {% endif %}>Haftalık</option>
+                                                <option {% if request.GET.tur == "Aylık" %}selected="selected" {% endif %}>Aylık</option>
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div>
+                                        <button class="au-btn-filter" type="button" data-toggle="collapse" data-target="#multiCollapseExample" aria-expanded="false" aria-controls="multiCollapseExample">
+                                            <i class="zmdi zmdi-filter-list"></i>Detaylı Filtreleme</button>
+                                    </div>
+                                    <div class="table-data__tool-right">
+                                        <button class="au-btn au-btn-icon au-btn--green au-btn--small" type="submit">
+                                            <i class="zmdi zmdi-check"></i>FİLTRELE</button>
+                                        <button class="au-btn au-btn-icon au-btn--blue au-btn--small" type="button" onclick="location.href='/kayitlar/masalar/masa/{{ masa.masa_no }}'">
+                                            <i class="fa fa-times"></i>FİLTRELEMELERİ KALDIR</button>
+                                    </div>
+                                </div>
+                                </form>
+
+                                <div class="collapse multi-collapse" id="multiCollapseExample" style="width: 100%">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-12">
+                                            <div class="card" style="width: 100%">
+                                                <div class="card-header">
+                                                    <h4>Detaylı Filtreleme</h4>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="default-tab">
+                                                        <nav>
+                                                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home"
+                                                                 aria-selected="true">Belirli tarihe göre</a>
+                                                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Tarih aralığına göre</a>
+
+                                                            </div>
+                                                        </nav>
+                                                            <div class="tab-content pl-3 pt-2" id="nav-tabContent">
+                                                                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                                                                        <br>
+                                                                            <form method="get">
+                                                                                <div class="row form-group">
+                                                                                    <div class="col col-md-2">
+                                                                                        <label for="text-input" class=" form-control-label">Gün Seçimi</label>
+                                                                                    </div>
+                                                                                    <div class="col-12 col-md-5 ">
+                                                                                        <input name="filtreleme_turu" value="belirli" style="display: none">
+                                                                                        <input type="date" name="tarih" id="text-input"  class="form-control" required>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <button type="submit" class="au-btn au-btn-icon au-btn--green au-btn--small"><i class="zmdi zmdi-check"></i>FİLTRELE</button>
+                                                                            </form>
+                                                                        </div>
+
+                                                                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+                                                                            <br>
+                                                                            <form method="get">
+                                                                                <div class="row form-group">
+
+                                                                                    <div class="col col-md-2">
+                                                                                        <label for="text-input" class=" form-control-label">Başlangıç</label>
+                                                                                    </div>
+                                                                                    <div class="col-12 col-md-5 ">
+                                                                                        <input name="filtreleme_turu" value="aralık" style="display: none">
+                                                                                        <input type="date" name="baslangic" id="text-input"  class="form-control" required>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row form-group">
+                                                                                    <div class="col col-md-2">
+                                                                                        <label for="text-input" class=" form-control-label">Bitiş</label>
+                                                                                    </div>
+                                                                                    <div class="col-12 col-md-5 ">
+                                                                                        <input type="date" name="bitis" id="text-input"  class="form-control" required>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <button type="submit" class="au-btn au-btn-icon au-btn--green au-btn--small"><i class="zmdi zmdi-check"></i>FİLTRELE</button>
+                                                                            </form>
+                                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+							</div>
+                                    </div>
+                                </div>
+                            {% if kayitlar %}
+                                <div class="table-responsive table-responsive-data2">
+                                    <table class="table table-data2">
+                                        <thead>
+                                            <tr>
+                                                <th>Masa numarası</th>
+                                                <th>Kişi Sayısı</th>
+                                                <th>Ürün Sayısı</th>
+                                                <th>Masa Açılış</th>
+                                                <th>Masa Kapanış</th>
+                                                <th>Ücret</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for i in kayitlar %}
+                                                <tr class="tr-shadow">
+                                                    <td>{{ i.masa_no }}</td>
+                                                    <td>
+                                                        {{ i.kisi_sayisi }} kişi
+                                                    </td>
+                                                    <td>{{ i.toplam_urun }} adet</td>
+                                                    <td>{{ i.siparis_zamani }}</td>
+                                                    {% if i.siparis_kapanis %}
+                                                        <td>
+                                                        {{i.siparis_kapanis}}
+                                                        </td>
+                                                        {% else %}
+                                                        <td>
+                                                            Masada halen sipariş var.
+                                                        </td>
+                                                    {% endif %}
+
+                                                    <td>{{ i.toplam_ucret }}₺</td>
+                                                    <td>
+                                                        <div class="table-data-feature">
+                                                            <button class="item"  data-placement="top" title="İçeriği Gör" data-toggle="modal" data-target="#exampleModalCenter" onclick="modal({{ i.id }})">
+                                                                <i class="zmdi zmdi-plus-circle"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr class="spacer"></tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% else %}
+                                <h3 style="width: 100%;top: 50px" class="text-center">Kayıt Bulunamadı!</h3>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: fit-content">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Kayıt İçeriği</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive table--no-card m-b-30">
+                        <table class="table table-borderless table-striped table-earning" id="table">
+                            <thead>
+                            <tr>
+                                <th>Ürün Adı</th>
+                                <th>Ürün Adedi</th>
+                                <th>Toplam Ücret</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="fa fa-close" style="margin-right: 5px"></i> Kapat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        function modal(id) {
+            {% for k in kayitlar %}
+                k_id={{ k.id }};
+                if (k_id === id){
+                    list={{ k.siparis_list|safe }};
+                    for (const i in list){
+                        {% for m in menu %}
+                            menu_id={{ m.id }};
+                            if (menu_id === parseInt(i)){
+                                let table = document.getElementById("table");
+                                let row = table.insertRow(1);
+                                let cell1 = row.insertCell(0);
+                                let cell2 = row.insertCell(1);
+                                let cell3 = row.insertCell(2);
+                                cell1.innerHTML = "<td>{{ m.urun_adi }}</th>";
+                                cell2.innerHTML = `<th class='text-right'>${list[i]}</th>`;
+                                fiyat={{ m.fiyat|safe }};
+                                toplam_ucret=fiyat*list[i];
+                                console.log(fiyat);
+                                cell3.innerHTML = `<th class='text-right'>${toplam_ucret}₺ </th>`;
+                            }
+                        {% endfor %}
+                    }
+                }
+
+            {% endfor %}
+        }
+
+    </script>
+{% endblock %}

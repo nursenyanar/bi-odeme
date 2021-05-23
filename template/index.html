@@ -1,0 +1,831 @@
+{% extends 'include/base.html' %}
+
+{% block title %}Anasayfa{% endblock %}
+{% block content %}
+
+          <!-- Page Heading -->
+                     <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="overview-wrap">
+                                    <h2 class="title-1">Anasayfa</h2>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-25">
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="overview-item overview-item--c1">
+                                    <div class="overview__inner">
+                                        <div class="overview-box clearfix">
+                                            <div class="icon">
+                                                <i class="zmdi zmdi-account-o"></i>
+                                            </div>
+                                            <div class="text">
+                                                <h2>{{ ortalama_musteri }}</h2>
+                                                <span>Haftalık müşteri</span>
+                                            </div>
+                                        </div>
+                                        <div class="overview-chart">
+                                            <canvas id="widgetChart1" style="height: 100%"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="overview-item overview-item--c2">
+                                    <div class="overview__inner">
+                                        <div class="overview-box clearfix">
+                                            <div class="icon">
+                                                <i class="fa fa-shopping-bag"></i>
+                                            </div>
+                                            <div class="text">
+                                                <h2>{{ satilan_toplam_urun}}</h2>
+                                                <span>Haftalık satış</span>
+                                            </div>
+                                        </div>
+                                        <div class="overview-chart">
+                                            <canvas id="widgetChart2"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+{#                            <div class="col-sm-6 col-lg-3">#}
+{#                                <div class="overview-item overview-item--c3">#}
+{#                                    <div class="overview__inner">#}
+{#                                        <div class="overview-box clearfix">#}
+{#                                            <div class="icon">#}
+{#                                                <i class="zmdi zmdi-calendar-note"></i>#}
+{#                                            </div>#}
+{#                                            <div class="text">#}
+{#                                                <h2>1,086</h2>#}
+{#                                                <span>this week</span>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="overview-chart">#}
+{#                                            <canvas id="widgetChart3"></canvas>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="overview-item overview-item--c4">
+                                    <div class="overview__inner">
+                                        <div class="overview-box clearfix">
+                                            <div class="icon">
+                                                <i class="zmdi zmdi-money"></i>
+                                            </div>
+                                            <div class="text">
+                                                <h2>{{ ortalama_para}}₺</h2>
+                                                <span>Haftalık kazanç</span>
+                                            </div>
+                                        </div>
+                                        <div class="overview-chart">
+                                            <canvas id="widgetChart4" style="height: 100%"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 col-12 col-sm-12">
+                                <div class="au-card m-b-30">
+                                    <div class="au-card-inner">
+                                        <h3 class="title-2 m-b-40">Haftalık Müşteri Karşılaştırması</h3>
+                                        <div class="chart-info">
+                                            <div class="chart-info__left">
+                                                <div class="chart-note">
+                                                    <span class="dot dot--red"></span>
+                                                    <span>Geçen Hafta</span>
+                                                </div>
+                                                <div class="chart-note mr-0">
+                                                    <span class="dot dot--green"></span>
+                                                    <span>Bu Hafta</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <canvas id="sales-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12 col-12 col-sm-12">
+                                <div class="au-card m-b-30">
+                                    <div class="au-card-inner">
+                                        <h3 class="title-2 m-b-40">Haftalık Para Karşılaştırması</h3>
+                                        <div class="chart-info">
+                                            <div class="chart-info__left">
+                                                <div class="chart-note">
+                                                    <span class="dot dot--red"></span>
+                                                    <span>Geçen Hafta</span>
+                                                </div>
+                                                <div class="chart-note mr-0">
+                                                    <span class="dot dot--green"></span>
+                                                    <span>Bu Hafta</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <canvas id="team-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        (function ($) {
+  // USE STRICT
+  "use strict";
+
+  try {
+    //WidgetChart 1
+    var ctx = document.getElementById("widgetChart1");
+    if (ctx) {
+      ctx.height = 130;
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: {{ gun_adlari|safe }},
+          type: 'line',
+          datasets: [{
+            data: {{ liste|safe }},
+            label: 'Müşteri Sayısı',
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(255,255,255,.55)',
+          },]
+        },
+        options: {
+
+          maintainAspectRatio: false,
+          legend: {
+            display: false
+          },
+          responsive: true,
+          tooltips: {
+            mode: 'index',
+            titleFontSize: 12,
+            titleFontColor: '#000',
+            bodyFontColor: '#000',
+            backgroundColor: '#fff',
+            titleFontFamily: 'Montserrat',
+            bodyFontFamily: 'Montserrat',
+            cornerRadius: 3,
+            intersect: false,
+          },
+          scales: {
+            xAxes: [{
+              gridLines: {
+                color: 'transparent',
+                zeroLineColor: 'transparent'
+              },
+              ticks: {
+                fontSize: 2,
+                fontColor: 'transparent'
+              }
+            }],
+            yAxes: [{
+              display: false,
+              ticks: {
+                display: false,
+              }
+            }]
+          },
+          title: {
+            display: false,
+          },
+          elements: {
+            line: {
+              borderWidth: 1
+            },
+            point: {
+              radius: 4,
+              hitRadius: 10,
+              hoverRadius: 4
+            }
+          }
+        }
+      });
+    }
+
+
+    //WidgetChart 2
+    var ctx = document.getElementById("widgetChart2");
+    if (ctx) {
+      ctx.height = 130;
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: {{ gun_adlari|safe }},
+          type: 'line',
+          datasets: [{
+            data: {{ satilan_urun_list|safe }},
+            label: 'Sipariş Adedi',
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(255,255,255,.55)',
+          },]
+        },
+        options: {
+
+          maintainAspectRatio: false,
+          legend: {
+            display: false
+          },
+          responsive: true,
+          tooltips: {
+            mode: 'index',
+            titleFontSize: 12,
+            titleFontColor: '#000',
+            bodyFontColor: '#000',
+            backgroundColor: '#fff',
+            titleFontFamily: 'Montserrat',
+            bodyFontFamily: 'Montserrat',
+            cornerRadius: 3,
+            intersect: false,
+          },
+          scales: {
+            xAxes: [{
+              gridLines: {
+                color: 'transparent',
+                zeroLineColor: 'transparent'
+              },
+              ticks: {
+                fontSize: 2,
+                fontColor: 'transparent'
+              }
+            }],
+            yAxes: [{
+              display: false,
+              ticks: {
+                display: false,
+              }
+            }]
+          },
+          title: {
+            display: false,
+          },
+          elements: {
+            line: {
+              tension: 0.00001,
+              borderWidth: 1
+            },
+            point: {
+              radius: 4,
+              hitRadius: 10,
+              hoverRadius: 4
+            }
+          }
+        }
+      });
+    }
+
+
+    //WidgetChart 3
+    var ctx = document.getElementById("widgetChart3");
+    if (ctx) {
+      ctx.height = 130;
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          type: 'line',
+          datasets: [{
+            data: [65, 59, 84, 84, 51, 55],
+            label: 'Dataset',
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(255,255,255,.55)',
+          },]
+        },
+        options: {
+
+          maintainAspectRatio: false,
+          legend: {
+            display: false
+          },
+          responsive: true,
+          tooltips: {
+            mode: 'index',
+            titleFontSize: 12,
+            titleFontColor: '#000',
+            bodyFontColor: '#000',
+            backgroundColor: '#fff',
+            titleFontFamily: 'Montserrat',
+            bodyFontFamily: 'Montserrat',
+            cornerRadius: 3,
+            intersect: false,
+          },
+          scales: {
+            xAxes: [{
+              gridLines: {
+                color: 'transparent',
+                zeroLineColor: 'transparent'
+              },
+              ticks: {
+                fontSize: 2,
+                fontColor: 'transparent'
+              }
+            }],
+            yAxes: [{
+              display: false,
+              ticks: {
+                display: false,
+              }
+            }]
+          },
+          title: {
+            display: false,
+          },
+          elements: {
+            line: {
+              borderWidth: 1
+            },
+            point: {
+              radius: 4,
+              hitRadius: 10,
+              hoverRadius: 4
+            }
+          }
+        }
+      });
+    }
+
+
+    //WidgetChart 4
+    var ctx = document.getElementById("widgetChart4");
+    if (ctx) {
+      ctx.style.height="100%"
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ gun_adlari|safe }},
+          datasets: [
+            {
+              label: "Günün Kazancı",
+              data: {{ haftalik_kazanc_list|safe }},
+              borderColor: "transparent",
+              borderWidth: "0",
+              backgroundColor: "rgba(255,255,255,.3)"
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: true,
+          legend: {
+            display: false
+          },
+          scales: {
+            xAxes: [{
+              display: false,
+              categoryPercentage: 1,
+              barPercentage: 0.65
+            }],
+            yAxes: [{
+              display: false
+            }]
+          }
+        }
+      });
+    }
+
+    // Recent Report
+    const brandProduct = 'rgba(0,181,233,0.8)'
+    const brandService = 'rgba(0,173,95,0.8)'
+
+    var elements = 10
+    var data1 = [52, 60, 55, 50, 65, 80, 57, 70, 105, 115]
+    var data2 = [102, 70, 80, 100, 56, 53, 80, 75, 65, 90]
+
+    var ctx = document.getElementById("recent-rep-chart");
+    if (ctx) {
+      ctx.height = 250;
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'],
+          datasets: [
+            {
+              label: 'My First dataset',
+              backgroundColor: brandService,
+              borderColor: 'transparent',
+              pointHoverBackgroundColor: '#fff',
+              borderWidth: 0,
+              data: data1
+
+            },
+            {
+              label: 'My Second dataset',
+              backgroundColor: brandProduct,
+              borderColor: 'transparent',
+              pointHoverBackgroundColor: '#fff',
+              borderWidth: 0,
+              data: data2
+
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: true,
+          legend: {
+            display: false
+          },
+          responsive: true,
+          scales: {
+            xAxes: [{
+              gridLines: {
+                drawOnChartArea: true,
+                color: '#f2f2f2'
+              },
+              ticks: {
+                fontFamily: "Poppins",
+                fontSize: 12
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                maxTicksLimit: 5,
+                stepSize: 50,
+                max: 150,
+                fontFamily: "Poppins",
+                fontSize: 12
+              },
+              gridLines: {
+                display: true,
+                color: '#f2f2f2'
+
+              }
+            }]
+          },
+          elements: {
+            point: {
+              radius: 0,
+              hitRadius: 10,
+              hoverRadius: 4,
+              hoverBorderWidth: 3
+            }
+          }
+
+
+        }
+      });
+    }
+
+    // Percent Chart
+    var ctx = document.getElementById("percent-chart");
+    if (ctx) {
+      ctx.height = 280;
+      var myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [
+            {
+              label: "My First dataset",
+              data: [60, 40],
+              backgroundColor: [
+                '#00b5e9',
+                '#fa4251'
+              ],
+              hoverBackgroundColor: [
+                '#00b5e9',
+                '#fa4251'
+              ],
+              borderWidth: [
+                0, 0
+              ],
+              hoverBorderColor: [
+                'transparent',
+                'transparent'
+              ]
+            }
+          ],
+          labels: [
+            'Products',
+            'Services'
+          ]
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsive: true,
+          cutoutPercentage: 55,
+          animation: {
+            animateScale: true,
+            animateRotate: true
+          },
+          legend: {
+            display: false
+          },
+          tooltips: {
+            titleFontFamily: "Poppins",
+            xPadding: 15,
+            yPadding: 10,
+            caretPadding: 0,
+            bodyFontSize: 16
+          }
+        }
+      });
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+
+
+
+  try {
+
+    // Recent Report 2
+    const bd_brandProduct2 = 'rgba(0,181,233,0.9)'
+    const bd_brandService2 = 'rgba(0,173,95,0.9)'
+    const brandProduct2 = 'rgba(0,181,233,0.2)'
+    const brandService2 = 'rgba(0,173,95,0.2)'
+
+    var data3 = [52, 60, 55, 50, 65, 80, 57, 70, 105, 115]
+    var data4 = [102, 70, 80, 100, 56, 53, 80, 75, 65, 90]
+
+    var ctx = document.getElementById("recent-rep2-chart");
+    if (ctx) {
+      ctx.height = 230;
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', ''],
+          datasets: [
+            {
+              label: 'My First dataset',
+              backgroundColor: brandService2,
+              borderColor: bd_brandService2,
+              pointHoverBackgroundColor: '#fff',
+              borderWidth: 0,
+              data: data3
+
+            },
+            {
+              label: 'My Second dataset',
+              backgroundColor: brandProduct2,
+              borderColor: bd_brandProduct2,
+              pointHoverBackgroundColor: '#fff',
+              borderWidth: 0,
+              data: data4
+
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: true,
+          legend: {
+            display: false
+          },
+          responsive: true,
+          scales: {
+            xAxes: [{
+              gridLines: {
+                drawOnChartArea: true,
+                color: '#f2f2f2'
+              },
+              ticks: {
+                fontFamily: "Poppins",
+                fontSize: 12
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                maxTicksLimit: 5,
+                stepSize: 50,
+                max: 150,
+                fontFamily: "Poppins",
+                fontSize: 12
+              },
+              gridLines: {
+                display: true,
+                color: '#f2f2f2'
+
+              }
+            }]
+          },
+          elements: {
+            point: {
+              radius: 0,
+              hitRadius: 10,
+              hoverRadius: 4,
+              hoverBorderWidth: 3
+            },
+            line: {
+              tension: 0
+            }
+          }
+
+
+        }
+      });
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+
+
+
+
+
+  try {
+    //Sales chart
+    var ctx = document.getElementById("sales-chart");
+    if (ctx) {
+      ctx.height = 150;
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ["Pzr", "Sal", "Çrş", "Prş", "Cum", "Cmr", "Paz"],
+          type: 'line',
+          defaultFontFamily: 'Poppins',
+          datasets: [{
+            label: "Geçen Hafta",
+            data: {{ gecen_hafta|safe }},
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(220,53,69,0.75)',
+            borderWidth: 3,
+            pointStyle: 'circle',
+            pointRadius: 5,
+            pointBorderColor: 'transparent',
+            pointBackgroundColor: 'rgba(220,53,69,0.75)',
+          }, {
+            label: "Bu hafta",
+            data: {{ bu_hafta|safe }},
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(40,167,69,0.75)',
+            borderWidth: 3,
+            pointStyle: 'circle',
+            pointRadius: 5,
+            pointBorderColor: 'transparent',
+            pointBackgroundColor: 'rgba(40,167,69,0.75)',
+          }]
+        },
+        options: {
+          responsive: true,
+          tooltips: {
+            mode: 'index',
+            titleFontSize: 12,
+            titleFontColor: '#000',
+            bodyFontColor: '#000',
+            backgroundColor: '#fff',
+            titleFontFamily: 'Poppins',
+            bodyFontFamily: 'Poppins',
+            cornerRadius: 3,
+            intersect: false,
+          },
+          legend: {
+            display: false,
+            labels: {
+              usePointStyle: true,
+              fontFamily: 'Poppins',
+            },
+          },
+          scales: {
+            xAxes: [{
+              display: true,
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              scaleLabel: {
+                display: false,
+                labelString: 'Month'
+              },
+              ticks: {
+                fontFamily: "Poppins"
+              }
+            }],
+            yAxes: [{
+              display: true,
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Value',
+                fontFamily: "Poppins"
+
+              },
+              ticks: {
+                fontFamily: "Poppins"
+              }
+            }]
+          },
+          title: {
+            display: false,
+            text: 'Normal Legend'
+          }
+        }
+      });
+    }
+
+
+  } catch (error) {
+    console.log(error);
+  }
+
+  try {
+    //Sales chart
+    var ctx = document.getElementById("team-chart");
+    if (ctx) {
+      ctx.height = 150;
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ["Pzr", "Sal", "Çrş", "Prş", "Cum", "Cmr", "Paz"],
+          type: 'line',
+          defaultFontFamily: 'Poppins',
+          datasets: [{
+            label: "Geçen Hafta",
+            data: {{ gecen_hafta_para|safe }},
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(220,53,69,0.75)',
+            borderWidth: 3,
+            pointStyle: 'circle',
+            pointRadius: 5,
+            pointBorderColor: 'transparent',
+            pointBackgroundColor: 'rgba(220,53,69,0.75)',
+          }, {
+            label: "Bu hafta",
+            data: {{ bu_hafta_para|safe }},
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(40,167,69,0.75)',
+            borderWidth: 3,
+            pointStyle: 'circle',
+            pointRadius: 5,
+            pointBorderColor: 'transparent',
+            pointBackgroundColor: 'rgba(40,167,69,0.75)',
+          }]
+        },
+        options: {
+          responsive: true,
+          tooltips: {
+            mode: 'index',
+            titleFontSize: 12,
+            titleFontColor: '#000',
+            bodyFontColor: '#000',
+            backgroundColor: '#fff',
+            titleFontFamily: 'Poppins',
+            bodyFontFamily: 'Poppins',
+            cornerRadius: 3,
+            intersect: false,
+          },
+          legend: {
+            display: false,
+            labels: {
+              usePointStyle: true,
+              fontFamily: 'Poppins',
+            },
+          },
+          scales: {
+            xAxes: [{
+              display: true,
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              scaleLabel: {
+                display: false,
+                labelString: 'Month'
+              },
+              ticks: {
+                fontFamily: "Poppins"
+              }
+            }],
+            yAxes: [{
+              display: true,
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Value',
+                fontFamily: "Poppins"
+
+              },
+              ticks: {
+                fontFamily: "Poppins"
+              }
+            }]
+          },
+          title: {
+            display: false,
+            text: 'Normal Legend'
+          }
+        }
+      });
+    }
+
+
+  } catch (error) {
+    console.log(error);
+  }
+
+})(jQuery);
+    </script>
+{% endblock %}

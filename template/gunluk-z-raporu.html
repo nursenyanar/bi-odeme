@@ -1,0 +1,68 @@
+{% extends 'include/base.html' %}
+
+
+{% block content %}
+        <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="overview-wrap ">
+                                    <h2 class="title-1">  </h2>
+                                </div>
+                            </div>
+                        </div><br><hr>
+                            {% if list %}
+                            <div class="row">
+                            <div class="col-lg-8 col-sm-7 col-12 ">
+                                <div class="table-responsive table--no-card m-b-30">
+                                    <table class="table table-borderless table-striped table-earning" id="list">
+                                        <thead>
+                                            <tr>
+                                                <th>Ürün Adı</th>
+                                                <th>Ürün Adeti</th>
+                                                <th>Toplam</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                           {% for i in list.items %}
+                                                <tr>
+                                                    <td>{{ i.0 }}</td>
+                                                    <td>{{ i.1.0 }}</td>
+                                                    <td>{{ i.1.1 }}₺</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-5 col-12">
+                                <div class="au-card au-card--bg-blue au-card-top-countries m-b-30" id="bilgi">
+                                    <div class="au-card-inner">
+                                        <div class="table-responsive">
+                                            <table class="table table-top-countries">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Toplam Müşteri</td>
+                                                        <td class="text-center">{{ toplam_musteri }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Toplam Para</td>
+                                                        <td class="text-center">{{ toplam_para }}₺</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Toplam Ürün Adedi</td>
+                                                        <td class="text-center">{{ toplam_urun }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                {% else %}
+                                <h3 style="width: 100%;top: 50px" class="text-center">Kayıt Bunmamaktadır!</h3>
+                            {% endif %}
+                    </div>
+                </div>
+{% endblock %}

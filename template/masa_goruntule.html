@@ -1,0 +1,340 @@
+{% extends 'include/base.html' %}
+
+
+{% block content %}
+        <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="overview-wrap ">
+                                    <h2>Masa {{ masa.masa_no }} Detaylar</h2>
+                                </div>
+                            </div>
+                        </div><hr><br>
+                        <div class="row"    >
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-12" style="margin-bottom: 50px">
+                                <!-- DATA TABLE -->
+                                <h2 class="title-1 m-b-25">Menü Listesi</h2>
+                                <div class="table-responsive table-responsive-data2">
+                                    <table class="table table-data2">
+                                        <tbody>
+                                        {% for k in kategoriler %}
+                                            <tr class="tr-shadow">
+                                                <td style="padding-right: 35px">
+                                                    <div class="row" data-toggle="collapse" data-target="#multiCollapseExample{{ k.id }}" aria-expanded="false" aria-controls="multiCollapseExample{{ i.id }}">
+                                                        <div class="col-lg-10 col-md-10 col-10 col-sm-10">
+                                                            <h4>{{ k.kategori }}</h4>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-2 col-sm-2">
+                                                            <div class="table-data-feature">
+                                                                <button type="button" class="item"  data-placement="top" title="Send" data-toggle="collapse" data-target="#multiCollapseExample{{ k.id }}" aria-expanded="false" aria-controls="multiCollapseExample{{ i.id }}">
+                                                                    <i class="fa fa-plus-circle"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                                <div class="collapse multi-collapse" id="multiCollapseExample{{ k.id }}" style="width: 100%">
+                                                                    <br><br>
+                                                                        <div class="table-responsive table--no-card m-b-40">
+                                                                                        <table class="table table-borderless table-striped table-earning" style="color: #e5e5e5;font-size: small">
+                                                                                            <tbody>
+                                                                                                {% for i in menu %}
+                                                                                                    {% if k.kategori == i.kategori %}
+                                                                                                        <tr class="border-bottom" style="background-color: #333333">
+                                                                                                        <th class="text-left">{{ i.urun_adi }}</th>
+                                                                                                        <th class="text-center" style="color: #000">
+                                                                                                            <div class="rs-select2--light rs-select2--sm">
+                                                                                                                <select class="js-select2" id="input{{ i.id }}" >
+                                                                                                                    {% if i.porsiyon_1 %}<option  >1 ({{ i.porsiyon_1 }}₺)</option>{% endif %}
+                                                                                                                    {% if i.porsiyon_0_5 %}<option >0.5 ({{ i.porsiyon_0_5 }}₺)</option>{% endif %}
+                                                                                                                    {% if i.porsiyon_1_5 %}<option >1.5 ({{ i.porsiyon_1_5 }}₺)</option>{% endif %}
+                                                                                                                    {% if i.porsiyon_2 %}<option >2 ({{ i.porsiyon_2 }}₺)</option>{% endif %}
+                                                                                                                </select>
+                                                                                                                <div class="dropDownSelect2"></div>
+                                                                                                            </div>
+                                                                                                        </th>
+                                                                                                        <th class="text-right">
+                                                                                                            <button type="button" class="btn btn-primary" onclick="ekle({{ i.id }})">Ekle</button>
+                                                                                                        </th>
+                                                                                                        </tr>
+                                                                                                        <tr class="spacer"></tr>
+                                                                                                    {% endif %}
+                                                                                                {% endfor %}
+                                                                                                  </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                </div>
+
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="spacer"></tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- END DATA TABLE -->
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                                <h2 class="title-1 m-b-25">Sipariş Listesi</h2>
+                                <div class="table-responsive table--no-card m-b-40">
+                                    <table class="table table-borderless table-striped table-earning" id="table" style="text-align: center">
+                                        <thead>
+                                            <tr>
+                                                <th>Ürün Adı</th>
+                                                <th>Fiyatı</th>
+                                                <th>Porsiyon</th>
+                                                <th>Ürün Sayısı</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <form method="post" style="width: 100%">
+                                    {% csrf_token %}
+                                    <div class="row form-group" id="kisi">
+                                        <div class="col col-md-3 col-lg-3">
+                                            <label for="text-input" class=" form-control-label">Müşteri Sayısı</label>
+                                        </div>
+                                        <div class="col-12 col-md-9 col-lg-9" >
+                                            <input type="number" id="text-input"  name="kisi_say" placeholder="müşteri sayısı" class="form-control" value="{{ masa.kisi_say }}">
+                                            <small class="form-text text-muted">Bu tamamen istatislik veri amaçlıdır. Müşteri sayısı girilmediği taktirde 1 olarak alınacaktır.</small>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <h3 class="text-center" id="siparis_uyari" style="width: 100%">Sipariş edilen ürün yok</h3>
+
+                                            <div class="col-lg-5 col-sm-5 col-5">
+                                                <button type="button" class="btn btn-danger" id="hesabi_Al" style="width: 100%" onclick="location.href='/hesap-al/{{ masa.masa_no }}'">Hesap Öde</button>
+                                            </div>
+                                            <div class="col-lg-5 col-sm-5 col-5" style="width: 50%">
+                                                    <input id="veri" name="veri" style="display: none">
+                                                    <button type="submit" class="btn btn-primary" id="siparis_ver" style="width: 100%">Siparişi Tamamla</button>
+                                            </div><br>
+                                        <div class="col-lg-5 col-sm-5 col-5" style="width: 50%;margin-top: 20px">
+                                            <button type="button" id="siparis_temizle" class="btn btn-primary" onclick="location.href='/siparis-temizle/{{ masa.masa_no }}'"  style="width: 100%">Siparişi Sil</button>
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-5" style="width: 50%;margin-top: 20px">
+                                            <button type="button" id="masa_tasi" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter" style="width: 100%">Masayı Taşı</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="snackbar"></div>
+                </div>
+                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Masa Taşıma</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="get" style="width: 100%;text-align: end">
+                            <div class="row form-group" >
+                                <div class="col-6 col-md-4 col-lg-4">
+                                    <label for="text-input" class=" form-control-label">Masa Seçimi</label>
+                                </div>
+                                <div class="col-6 col-md-8 col-lg-8">
+                                        <div class="rs-select2--light rs-select2--sm">
+                                            <select class="js-select2" name="masa_no">
+                                                {% for i in tum_masalar %}
+                                                    {% if i.masa_bosmu %}
+                                                        <option>{{ i.masa_no }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div>
+                                </div>
+                            </div><br>
+                        <button type="submit" class="btn btn-success">Masayı Taşı</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="fa fa-close" style="margin-right: 5px"></i> Kapat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+
+
+    const myArray={
+        siparisler:[]
+    };
+    const count = {};
+    let index1;
+    document.getElementById("siparis_ver").style.display="none";
+    document.getElementById("hesabi_Al").style.display="none";
+    document.getElementById("kisi").style.display="none";
+    document.getElementById("masa_tasi").style.display="none";
+    let veri=document.getElementById("veri");
+    document.getElementById("siparis_temizle").style.display="none";
+
+    {% if not masa.masa_bosmu %}
+        document.getElementById("siparis_temizle").style.display="block";
+        document.getElementById("hesabi_Al").style.display="block";
+        document.getElementById("masa_tasi").style.display="block";
+        document.getElementById("siparis_ver").innerText="Siparişi Güncelle";
+        document.getElementById("kisi").style.display="flex";
+        const liste={{masa.siparis_list|safe}};
+        liste.siparisler.forEach(function (i) {
+            ekle(i.id,0,i.porsiyon,i.fiyat)
+            if (i.adet >1){
+                for (var a=1;a<i.adet;a++){
+                    arttir(i.id,i.porsiyon);
+                }
+            }
+        })
+    {% endif %}
+
+
+
+    setInterval(function () {
+        if (Object.keys(myArray).length === 0){
+            document.getElementById("hesabi_Al").style.display="none";
+            document.getElementById("siparis_ver").style.display="none";
+            document.getElementById("siparis_uyari").style.display="block";
+            document.getElementById("kisi").style.display="none";
+
+        }
+    },100);
+
+    function ekle(index,kontrol=1,porsiyon_bilgisi=-1,fiyat_bilgisi=-1) {
+        var porsiyon=document.getElementById("input"+index).value;
+        tmp=porsiyon.toString().indexOf("(")
+        porsiyon=parseFloat(porsiyon.toString().substring(0,tmp));
+        artacakmi=false;
+        if (kontrol){
+            myArray.siparisler.forEach(function (i) {
+            if(i.id===index && i.porsiyon===porsiyon){
+                arttir(index,porsiyon);
+                artacakmi=true;
+            }
+        })
+        }
+        {% for i in menu %}
+            id ={{ i.id }};
+                index1 = index;
+                if (id === parseInt(index) && !artacakmi) {
+                    if(porsiyon ===1){
+                            {% if i.porsiyon_1%}fiyat ={{ i.porsiyon_1|safe }};{% endif %}
+                        }else if(porsiyon=== 2){
+                            {% if i.porsiyon_2%}fiyat ={{ i.porsiyon_2|safe }};{% endif %}
+                        }else if(porsiyon=== 1.5){
+                            {% if i.porsiyon_1_5%}fiyat ={{ i.porsiyon_1_5|safe }};{% endif %}
+                        }else{
+                            {% if i.porsiyon_0_5%}fiyat ={{ i.porsiyon_0_5|safe }};{% endif %}
+                        }
+                    if (kontrol) {
+                        var x = document.getElementById("snackbar");
+                        x.className = "show";
+                        x.innerText = "{{ i.urun_adi }} eklendi."
+                        setTimeout(function () {
+                            x.className = x.className.replace("show", "");
+                        }, 2000);
+
+                        myArray.siparisler.push({
+                            id:{{ i.id }},
+                            adet:1,
+                            porsiyon:porsiyon,
+                            fiyat:fiyat
+                        })
+                    }else {
+                        myArray.siparisler.push({
+                            id:index,
+                            adet:1,
+                            porsiyon:porsiyon_bilgisi,
+                            fiyat:fiyat_bilgisi
+                        })
+                        porsiyon=porsiyon_bilgisi;
+                    }
+                    document.getElementById("siparis_uyari").style.display = "none";
+                    document.getElementById("siparis_ver").style.display = "block";
+                    document.getElementById("kisi").style.display = "flex";
+
+
+                    let table = document.getElementById("table");
+                    let row = table.insertRow(1);
+                    let cell1 = row.insertCell(0);
+                    let cell2 = row.insertCell(1);
+                    let cell3 = row.insertCell(2);
+                    let cell4 = row.insertCell(3);
+                    let cell5 = row.insertCell(4);
+
+                    cell1.innerHTML = "<td class='text-center' style='padding :20px'>" + "{{ i.urun_adi }}" + "</th>";
+                    cell2.innerHTML = "<th class='text-center' style='padding: 20px'><h5 id='fiyat{{ i.id }}'>"+fiyat+"</h5> </th>";
+                    cell3.innerHTML = "<th class='text-center' style='padding: 20px'>"+porsiyon+"</th>";
+                    text = "<th class='text-center' style='padding: 20px'><div class='row'><div class='col'><button class='item' data-toggle='tooltip' data-placement='top' data-original-title='Send' onclick='azalt({{ i.id }},%s)'><i class='zmdi zmdi-minus-circle' style='font-size: 30px'></i></button></div><div class='col' style='margin-left: -40px;margin-right:-40px'><h3 style='font-size: 25px' id='adet{{ i.id }}'>1</h3></div><div class='col'><button class='item' data-toggle='tooltip' data-placement='top'  data-original-title='Send' onclick='arttir({{ i.id }},%a)'><i class='zmdi zmdi-plus-circle' style='font-size: 30px'></i></button></div></div></th>";
+                    cell4.innerHTML=text.replace("%s",porsiyon).replace("%a",porsiyon);
+                    cell5.innerHTML = "<th class='text-right' style='padding: 20px'>" + "<button class=\"btn btn-danger\" onclick='row_delete(this,{{ i.id }})'>Kaldır</button>" + "</th>";
+                    veri.setAttribute("value", JSON.stringify(myArray));
+                }
+
+            {% endfor %}
+
+    }
+    function row_delete(btn,index_no) {
+        let row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+        delete myArray[index_no]
+        veri.setAttribute("value",JSON.stringify(myArray));
+
+    }
+
+
+    function arttir(id,porsiyon) {
+        myArray.siparisler.forEach(function (i) {
+            if (i.id===id && i.porsiyon === porsiyon) {
+
+                var tut = i.adet;
+                i.adet = tut + 1;
+                document.getElementById("adet" + id).innerHTML = i.adet;
+                fiyat = i.adet * i.fiyat;
+                document.getElementById("fiyat" + id).innerHTML = fiyat;
+                veri.setAttribute("value", JSON.stringify(myArray));
+
+            }
+        })
+
+    }
+    function azalt(id,porsiyon) {
+        myArray.siparisler.forEach(function (i) {
+            if (i.id===id && i.porsiyon === porsiyon){
+                var tut=i.adet;
+                if (tut > 1) {
+                    i.adet = tut - 1;
+                    document.getElementById("adet"+id).innerHTML=i.adet;
+                    fiyat=i.adet* i.fiyat;
+                    document.getElementById("fiyat"+id).innerHTML=fiyat;
+                    veri.setAttribute("value",JSON.stringify(myArray));
+                }
+            }
+        })
+
+
+    }
+</script>
+{% endblock %}
+

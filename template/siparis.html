@@ -1,0 +1,72 @@
+{% extends 'include/base.html' %}
+
+
+{% block content %}
+        <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="overview-wrap ">
+                                    <h2 class="title-1">Tüm Masalar</h2>
+                                </div>
+                            </div>
+                        </div><br>
+                        <div class="row justify-content-center">
+                            {% for i in masa %}
+                                {% if i.masa_bosmu %}
+                                    <div class="col-sm-6 col-lg-3 col-6">
+                                            <div class="overview-item overview-item--c2" onclick="location.href='/siparis-goruntule/{{ i.masa_no }}'">
+                                                <div class="overview__inner">
+                                                    <div class="overview-box clearfix">
+                                                        <div class="icon">
+                                                            <i class="fa fa-utensils"></i>
+                                                        </div><br>
+                                                        <div class="text" style="margin-bottom: 5px">
+                                                            <h2 style="white-space: pre-line">Masa {{ i.masa_no }}</h2>
+                                                            <span>masa boş</span><br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                    <div class="col-sm-6 col-lg-3 col-6">
+                                            <div class="overview-item overview-item--c1" onclick="location.href='/siparis-goruntule/{{ i.masa_no }}'">
+                                                <div class="overview__inner">
+                                                    <div class="overview-box clearfix">
+                                                        <div class="icon">
+                                                            <i class="fa fa-utensils"></i>
+                                                        </div><br>
+                                                        <div class="text" style="margin-bottom: 5px">
+                                                            <h2 style="white-space: pre-line">Masa {{ i.masa_no }}</h2>
+                                                            <span>hesap {{ i.toplam_ucret }}₺</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                {% endif %}
+                        {% endfor %}
+
+                        </div>
+
+                    </div>
+                            <div id="snackbar"></div>
+                </div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+
+    <script>
+        console.log({{ kontrol|length }});
+        {% if kontrol %}
+        var x = document.getElementById("snackbar");
+        x.className = "show";
+        x.innerText=""
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+        {% endif %}
+    </script>
+{% endblock %}

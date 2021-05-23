@@ -1,0 +1,51 @@
+{% extends 'include/base.html' %}
+{% load thumbnail %}
+
+{% block content %}
+    <div class="section__content section__content--p30">
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center mb-5 pb-2">
+				<div class="col-md-7 text-center heading-section">
+					<h2 class="mb-4">Menümüz</h2>
+				</div>
+			</div>
+			<div class="row">
+                {% for k in kategori %}
+				<div class="col-md-6 col-lg-4">
+					<div class="menu-wrap">
+						<div class="heading-menu text-center">
+							<h3>{{ k.kategori }}</h3>
+						</div>
+                        {% for i in menu %}
+                            {% if k.kategori == i.kategori %}
+						        <div class="menus d-flex">
+                                    {% thumbnail i.resim "240x160" crop="center" as im %}
+						            	<div class="menu-img img" style="background-image: url({{ im.url }});" ></div>
+                                    {% endthumbnail %}
+							<div class="text">
+								<div class="d-flex">
+									<div class="one-half">
+										<h3>{{ i.urun_adi }}</h3>
+									</div>
+									<div class="one-forth">
+										<span class="price">{{ i.porsiyon_1 }}₺</span>
+									</div>
+								</div>
+								<p><span>{{ i.aciklama }}</span></p>
+							</div>
+						</div>
+                            {% endif %}
+                        {% endfor %}
+					</div>
+				</div>
+                {% endfor %}
+            </div>
+        </div>
+	</section>
+    </div>
+    </div>
+{% endblock %}
+{% block style %}
+        <link href="/static/css/style.css" rel="stylesheet">
+{% endblock %}
