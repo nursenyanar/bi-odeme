@@ -37,7 +37,11 @@ Projeyi çalıştırmak için:
 ```
 python manage.py runserver
 ```
+# Contributing
+Pull requestler kabul edilir.
 
+# License
+[MIT](https://choosealicense.com/licenses/mit/)
 
 
 
