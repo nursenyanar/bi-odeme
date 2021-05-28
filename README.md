@@ -2,7 +2,7 @@
 Haftalık olarak; müşteri, satış ve kazanç değerleri; geçmiş masa bilgilerine ait kayıt verileri,müşteri siparişleri gibi durumların yöneticiler ve garsonlar tarafından erişilebilen bir programdır.
 # Image
 
-![Ürünler](/bi-odeme/blob/main/media/login.png)
+![Ürünler](/media/login.png)
 ![Ana Sayfa](/images/anasayfa.png)
 
 
