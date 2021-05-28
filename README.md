@@ -24,6 +24,7 @@ cd kodluyoruzilkrepo
 code .
 ```
 Eğer django kurulu değil ise kurulum için:
+
 Windows:
 ```
 py -m pip install Django
