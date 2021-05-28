@@ -23,7 +23,16 @@ Linux için:
 cd kodluyoruzilkrepo
 code .
 ```
-Yeni bir terminal açarak şu şekilde yazın:
+Eğer django kurulu değil ise kurulum için:
+Windows:
+```
+py -m pip install Django
+```
+Linux:
+```
+python -m pip install Django
+```
+Projeyi çalıştırmak için:
 ```
 python manage.py runserver
 ```
