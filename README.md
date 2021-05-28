@@ -2,8 +2,11 @@
 Haftalık olarak; müşteri, satış ve kazanç değerleri; geçmiş masa bilgilerine ait kayıt verileri,müşteri siparişleri gibi durumların yöneticiler ve garsonlar tarafından erişilebilen bir programdır.
 # Image
 
-![Ürünler](/media/login.png)
-![Ana Sayfa](/images/anasayfa.png)
+![Giris](/media/login.png)
+![Ana Sayfa](/media/home.png)
+![Siparis](/media/order.png)
+![Detaylar](/media/details.png)
+
 
 
 # Installation
